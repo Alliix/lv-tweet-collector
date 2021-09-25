@@ -9,16 +9,17 @@ const twitterClient = new TwitterClient({
   accessTokenSecret: config.accessTokenSecret,
 });
 
-const getTweets = async () => {
-  let tweetsJson = fs.readFileSync("./tweets/json/tweets.json", "utf-8");
-  let existingTweets = JSON.parse(tweetsJson);
-  const sinceId = existingTweets.tweets[existingTweets.tweets.length - 1].id;
-  const data = await twitterClient.tweets.search({
-    q: "locale:lv",
-    since_id: sinceId,
-  });
-  // const data = await twitterClient.tweets.search({ q: "locale:lv",  count: 200 }); //geocode: "56.95623,24.12363,10000km"
+const getTweets = async (query, file) => {
+  // let tweetsJson = fs.readFileSync(file, "utf-8");
+  // let existingTweets = JSON.parse(tweetsJson);
+  // const sinceId = existingTweets.tweets[existingTweets.tweets.length - 1].id;
+  // const data = await twitterClient.tweets.search({
+  //   q: query,
+  //   since_id: sinceId,
+  // });
+  const data = await twitterClient.tweets.search({ q: query, count: 200 }); //geocode: "56.95623,24.12363,10000km"
   const tweetObjects = data.statuses.map((d) => {
+    console.log(d.user);
     return {
       id: d.id,
       createdAt: d.created_at,
@@ -43,16 +44,16 @@ const getTweets = async () => {
   return tweetObjects;
 };
 
-const writeToJson = (tweetsArray) => {
-  const tweetsJson = fs.readFileSync("./tweets/json/tweets.json", "utf-8");
+const writeToJson = (tweetsArray, file) => {
+  let tweetsJson = fs.readFileSync(file, "utf-8");
   const existingTweets = JSON.parse(tweetsJson);
   existingTweets.tweets.push(...tweetsArray);
   tweetsJson = JSON.stringify(existingTweets);
-  fs.writeFileSync("./tweets/json/tweets.json", tweetsJson, "utf-8");
+  fs.writeFileSync(file, tweetsJson, "utf-8");
 };
 
-const writeUniqueToJson = () => {
-  let tweetsJson = fs.readFileSync("./tweets/json/tweets.json", "utf-8");
+const writeUniqueToJson = (fileFrom, fileTo) => {
+  let tweetsJson = fs.readFileSync(fileFrom, "utf-8");
   const existingTweets = JSON.parse(tweetsJson);
   const existingTweetsTextCleaned = existingTweets.tweets.map((t) =>
     replaceUrls(t)
@@ -63,7 +64,7 @@ const writeUniqueToJson = () => {
     return existingTweetsTextCleaned.find((a) => a.text === text);
   });
   tweetsJson = JSON.stringify({ tweets: uniqueTweets });
-  fs.writeFileSync("./tweets/json/uniqueTweets.json", tweetsJson, "utf-8");
+  fs.writeFileSync(fileTo, tweetsJson, "utf-8");
 };
 
 const replaceUrls = (tweet) => {
@@ -75,3 +76,9 @@ const replaceUrls = (tweet) => {
   return tweet;
 };
 
+const data = await getTweets("geocode:56.95623,24.12363,300km lang:lv", "");
+writeToJson(data, "./tweetsLocationLang/json/tweets.json");
+writeUniqueToJson(
+  "./tweetsLocationLang/json/tweets.json",
+  "./tweetsLocationLang/json/uniqueTweets.json"
+);

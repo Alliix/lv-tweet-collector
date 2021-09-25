@@ -19,7 +19,6 @@ const getTweets = async (query, file) => {
   // });
   const data = await twitterClient.tweets.search({ q: query, count: 200 }); //geocode: "56.95623,24.12363,10000km"
   const tweetObjects = data.statuses.map((d) => {
-    console.log(d.user);
     return {
       id: d.id,
       createdAt: d.created_at,

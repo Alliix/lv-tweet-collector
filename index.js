@@ -10,14 +10,14 @@ const twitterClient = new TwitterClient({
 });
 
 const getTweets = async (query, file) => {
-  // let tweetsJson = fs.readFileSync(file, "utf-8");
-  // let existingTweets = JSON.parse(tweetsJson);
-  // const sinceId = existingTweets.tweets[existingTweets.tweets.length - 1].id;
-  // const data = await twitterClient.tweets.search({
-  //   q: query,
-  //   since_id: sinceId,
-  // });
-  const data = await twitterClient.tweets.search({ q: query, count: 200 }); //geocode: "56.95623,24.12363,10000km"
+  let tweetsJson = fs.readFileSync(file, "utf-8");
+  let existingTweets = JSON.parse(tweetsJson);
+  const sinceId = existingTweets.tweets[existingTweets.tweets.length - 1].id;
+  const data = await twitterClient.tweets.search({
+    q: query,
+    since_id: sinceId,
+  });
+  // const data = await twitterClient.tweets.search({ q: query, count: 200 });
   const tweetObjects = data.statuses.map((d) => {
     return {
       id: d.id,

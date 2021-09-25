@@ -44,12 +44,34 @@ const getTweets = async () => {
 };
 
 const writeToJson = (tweetsArray) => {
-  let tweetsJson = fs.readFileSync("./tweets/json/tweets.json", "utf-8");
-  let existingTweets = JSON.parse(tweetsJson);
+  const tweetsJson = fs.readFileSync("./tweets/json/tweets.json", "utf-8");
+  const existingTweets = JSON.parse(tweetsJson);
   existingTweets.tweets.push(...tweetsArray);
   tweetsJson = JSON.stringify(existingTweets);
   fs.writeFileSync("./tweets/json/tweets.json", tweetsJson, "utf-8");
 };
 
-const data = await getTweets();
-writeToJson(data);
+const writeUniqueToJson = () => {
+  let tweetsJson = fs.readFileSync("./tweets/json/tweets.json", "utf-8");
+  const existingTweets = JSON.parse(tweetsJson);
+  const existingTweetsTextCleaned = existingTweets.tweets.map((t) =>
+    replaceUrls(t)
+  );
+  const uniqueTweets = Array.from(
+    new Set(existingTweetsTextCleaned.map((a) => a.text))
+  ).map((text) => {
+    return existingTweetsTextCleaned.find((a) => a.text === text);
+  });
+  tweetsJson = JSON.stringify({ tweets: uniqueTweets });
+  fs.writeFileSync("./tweets/json/uniqueTweets.json", tweetsJson, "utf-8");
+};
+
+const replaceUrls = (tweet) => {
+  if (tweet.urls.length) {
+    tweet.urls.forEach((url) => {
+      tweet.text = tweet.text.replace(url, "URL");
+    });
+  }
+  return tweet;
+};
+

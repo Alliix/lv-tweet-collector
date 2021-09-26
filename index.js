@@ -76,9 +76,32 @@ const replaceUrls = (tweet) => {
   return tweet;
 };
 
+const writeTweetIds = (tweetsArray) => {
+  const idsFile = fs.readFileSync("./tweetsIds/tweets.json", "utf-8");
+  let existingIds = JSON.parse(idsFile);
+  let lastIndex = existingIds.tweets[existingIds.tweets.length - 1].id;
+  for (const tweet in tweetsArray) {
+    lastIndex++;
+    existingIds.tweets.push({ index: lastIndex, id: tweet.id });
+  }
+  const tweetsIdsJson = JSON.stringify(existingIds);
+  fs.writeFileSync("./tweetsIds/tweets.json", tweetsIdsJson, "utf-8");
+};
+
+const writeAllTweetIds = () => {
+  const tweetsFromFile = fs.readFileSync(
+    "./tweetsLocationLang/json/tweets.json",
+    "utf-8"
+  );
+  const tweets = JSON.parse(tweetsFromFile);
+  const tweetsIds = tweets.tweets.map((t, i) => {
+    return { index: i, id: t.id };
+  });
+  const tweetsIdsJson = JSON.stringify({ tweets: tweetsIds });
+  fs.writeFileSync("./tweetsIds/tweets.json", tweetsIdsJson, "utf-8");
+};
+
 const writeUniqueTweetIds = () => {
-  // let idsFile = fs.readFileSync("./tweetsIds/uniqueTweets.json", "utf-8");
-  // const existingIds = JSON.parse(idsFile);
   const tweetsFromUniqueFile = fs.readFileSync(
     "./tweetsLocationLang/json/uniqueTweets.json",
     "utf-8"
@@ -100,4 +123,5 @@ writeUniqueToJson(
   "./tweetsLocationLang/json/tweets.json",
   "./tweetsLocationLang/json/uniqueTweets.json"
 );
+writeTweetIds(data);
 writeUniqueTweetIds();

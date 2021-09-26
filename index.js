@@ -79,7 +79,7 @@ const replaceUrls = (tweet) => {
 const writeTweetIds = (tweetsArray) => {
   const idsFile = fs.readFileSync("./tweetsIds/tweets.json", "utf-8");
   let existingIds = JSON.parse(idsFile);
-  let lastIndex = existingIds.tweets[existingIds.tweets.length - 1].id;
+  let lastIndex = existingIds.tweets[existingIds.tweets.length - 1].index;
   for (const tweet in tweetsArray) {
     lastIndex++;
     existingIds.tweets.push({ index: lastIndex, id: tweet.id });

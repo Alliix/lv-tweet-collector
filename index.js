@@ -79,7 +79,7 @@ const writeUniqueTweetIds = () => {
   // let idsFile = fs.readFileSync("./tweetsIds/tweets.json", "utf-8");
   // const existingIds = JSON.parse(idsFile);
   const tweetsFromUniqueFile = fs.readFileSync(
-    "./tweetsLocationLang/json/tweets.json",
+    "./tweetsLocationLang/json/uniqueTweets.json",
     "utf-8"
   );
   const uniqueTweets = JSON.parse(tweetsFromUniqueFile);
@@ -87,7 +87,7 @@ const writeUniqueTweetIds = () => {
     return { index: i, id: t.id };
   });
   const tweetsIdsJson = JSON.stringify({ tweets: uniqueTweetsIds });
-  fs.writeFileSync("./tweetsIds/tweets.json", tweetsIdsJson, "utf-8");
+  fs.writeFileSync("./tweetsIds/uniqueTweets.json", tweetsIdsJson, "utf-8");
 };
 
 // const data = await getTweets("geocode:56.95623,24.12363,300km lang:lv", "");
